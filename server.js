@@ -1,26 +1,35 @@
-const express = require('express');
-// Import and require mysql2
 const mysql = require('mysql2');
-
 const PORT = process.env.PORT || 3001;
-const app = express();
 
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+const cTable = require('console.table');
 
-// Connect to database
+const inquirer = require('inquirer');
+const fs = require('fs');
+
+
+// Connect to mysql 2 database
 const db = mysql.createConnection(
   {
     host: 'localhost',
     // MySQL username,
     user: 'root',
-    // TODO: Add MySQL password
+    // MySQL password - empty 
     password: '',
-    database: 'books_db'
+    database: 'employeeTracker_db'
   },
   console.log(`Connected to the books_db database.`)
 );
+
+// console table test 
+console.table([
+  {
+    name: 'foo',
+    age: 10
+  }, {
+    name: 'bar',
+    age: 20
+  }
+]);
 
 // Query database
 
@@ -47,3 +56,82 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// Adds this info to another index page 
+
+function writeUp(fileBody){
+    fs.writeFile(" readme.txt ", fileBody , (err) => { 
+        err? console.log (err) : console.log ("Write Up Complete")})
+}
+
+;
+
+// Inquirer Prompts 
+inquirer.prompt ([
+    {
+      type: 'input',
+      name: 'title',
+      message: 'Title of Repo:',
+    },
+    {
+      type: 'input',
+      message: 'Description:',
+      name: 'description',
+    },
+    {
+      type: 'input',
+      message: 'Installation Instructions:',
+      name: 'install',
+    },
+    {
+      type: 'input',
+      name: 'usage',
+      message: 'Usage Info:',
+    },
+    {
+      type: 'input',
+      name: 'contribution',
+      message: 'Contribution Info:',
+    },
+    {
+      type: 'input',
+      name: 'test',
+      message: 'Test Instructions:',
+      },
+      {
+        type: 'list',
+        message: 'Licence:',
+        name: 'license',
+        choices: ['MIT', 'GNU', 'NONE' ],
+      },
+      {
+        type: 'input',
+        name: 'github',
+        message: 'Github Page:',
+      },
+      {
+        type: 'input',
+        name: 'email',
+        message: 'Email Address: ',
+      },
+
+])
+  .then ((responseObj) => {
+    console.log(responseObj);
+    let fileBody = `
+    ${responseObj.title} 
+    "Description: " ${responseObj.description}
+    "Installation Instructions: "${responseObj.install} 
+    "License: " ${responseObj.license}
+    "Usage: " ${responseObj.usage}
+    "Contribution: "${responseObj.contribution} 
+    "Test Instructions: " ${responseObj.test}
+    "Git Hub Page:" ${responseObj.github} 
+    
+    "Email Me At: "${responseObj.email}
+    `; 
+    
+    writeUp(fileBody);
+
+    });
+
